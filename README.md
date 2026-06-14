@@ -30,6 +30,8 @@ Reset виконуйте окремо. Генератор навмисно не 
 - `configs/ap-wifi.example.json` - AP з новим `wifi`;
 - `generated/*.rsc` - готові результати генерації.
 - `manual/MikroTik-local-editable-gateway.rsc` - ручний локальний шаблон з коментарями та позначками `EDIT`.
+- `manual/MikroTik-local-editable-gateway-colored.html` - кольоровий перегляд шаблону: команди сині, місця для редагування червоні.
+- `Build-RscColorGuide.ps1` - повторно створює кольоровий HTML після зміни `.rsc`.
 
 ## Ваша схема у прикладах
 
@@ -113,6 +115,29 @@ Copy-Item `
 Каталог `manual/local` ігнорується Git. Шаблон також зупиняє імпорт, доки верхні значення `EDIT-...` не замінені.
 
 Шаблон вимикає Telnet, FTP, SSH, HTTP, HTTPS, API та API-SSL. Winbox залишається доступним лише з локальної management VLAN. Якщо політика забороняє також мережевий Winbox, у шаблоні треба встановити `disabled=yes` для сервісу `winbox` і залишити консольний доступ.
+
+### Кольоровий перегляд
+
+Формат `.rsc` не підтримує кольори. Для зручного читання відкрийте у браузері:
+
+```text
+manual/MikroTik-local-editable-gateway-colored.html
+```
+
+У ньому:
+
+- синім позначені виконувані RouterOS-команди;
+- червоним позначені значення та блоки, які треба переглянути або змінити;
+- сірим позначені пояснення.
+
+Після зміни ручного шаблону оновіть HTML:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File .\Build-RscColorGuide.ps1
+```
+
+На роутер завантажується тільки вихідний `.rsc`, не HTML-файл.
 
 ## Закладені правила безпеки
 

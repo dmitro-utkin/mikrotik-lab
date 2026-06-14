@@ -23,6 +23,8 @@ $profiles = @(
     }
 )
 $manualTemplate = Join-Path $PSScriptRoot "manual/MikroTik-local-editable-gateway.rsc"
+$manualColorGuide = Join-Path $PSScriptRoot "manual/MikroTik-local-editable-gateway-colored.html"
+$colorGuideBuilder = Join-Path $PSScriptRoot "Build-RscColorGuide.ps1"
 
 $tokens = $null
 $parseErrors = $null
@@ -129,6 +131,41 @@ try {
     }
 
     Write-Host "OK: $([System.IO.Path]::GetFileName($manualTemplate))"
+
+    $actualColorGuide = Join-Path $tempDirectory "manual-colored.html"
+    & $colorGuideBuilder -InputPath $manualTemplate -OutputPath $actualColorGuide
+
+    $expectedHtml = Get-Content -LiteralPath $manualColorGuide -Raw -Encoding UTF8
+    $actualHtml = Get-Content -LiteralPath $actualColorGuide -Raw -Encoding UTF8
+
+    if ($actualHtml -cne $expectedHtml) {
+        throw "Generated color guide differs from tracked HTML file."
+    }
+
+    foreach ($requiredClass in @(
+        'class="line command"',
+        'class="line editable"',
+        'class="line comment"'
+    )) {
+        if (-not $actualHtml.Contains($requiredClass)) {
+            throw "Color guide is missing required style class: $requiredClass"
+        }
+    }
+
+    foreach ($requiredStyle in @(
+        '--command: #075bc4;',
+        '--editable: #c62828;',
+        '--comment: #667085;',
+        '.command .text',
+        '.editable .text',
+        '.comment .text'
+    )) {
+        if (-not $actualHtml.Contains($requiredStyle)) {
+            throw "Color guide is missing required style: $requiredStyle"
+        }
+    }
+
+    Write-Host "OK: $([System.IO.Path]::GetFileName($manualColorGuide))"
 }
 finally {
     if (

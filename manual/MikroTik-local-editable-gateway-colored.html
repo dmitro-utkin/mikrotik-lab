@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MikroTik-local-editable-gateway.rsc - &#1082;&#1086;&#1083;&#1100;&#1086;&#1088;&#1086;&#1074;&#1072; &#1087;&#1110;&#1076;&#1082;&#1072;&#1079;&#1082;&#1072;</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --background: #f5f7fa;
+      --panel: #ffffff;
+      --border: #d7dde7;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --command: #075bc4;
+      --editable: #c62828;
+      --comment: #667085;
+      --line-number: #9aa4b2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      width: min(1500px, calc(100% - 32px));
+      margin: 24px auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .notice {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .legend span {
+      font-family: Consolas, "Courier New", monospace;
+      font-weight: 700;
+    }
+
+    .legend .command-key {
+      color: var(--command);
+    }
+
+    .legend .editable-key {
+      color: var(--editable);
+    }
+
+    .legend .comment-key {
+      color: var(--comment);
+    }
+
+    .code {
+      overflow: auto;
+      padding: 14px 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      font: 14px/1.55 Consolas, "Courier New", monospace;
+      tab-size: 4;
+    }
+
+    .line {
+      display: grid;
+      grid-template-columns: 64px minmax(max-content, 1fr);
+      min-height: 22px;
+      padding-right: 18px;
+      white-space: pre;
+    }
+
+    .line:hover {
+      background: #f0f4f9;
+    }
+
+    .number {
+      padding-right: 16px;
+      color: var(--line-number);
+      text-align: right;
+      user-select: none;
+    }
+
+    .command .text {
+      color: var(--command);
+      font-weight: 600;
+    }
+
+    .editable .text {
+      color: var(--editable);
+      font-weight: 700;
+      background: #fff0f0;
+    }
+
+    .comment .text {
+      color: var(--comment);
+    }
+
+    .blank .text {
+      color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>MikroTik-local-editable-gateway.rsc</h1>
+    <p class="notice">
+      &#1050;&#1086;&#1083;&#1100;&#1086;&#1088;&#1086;&#1074;&#1072; &#1074;&#1077;&#1088;&#1089;&#1110;&#1103; &#1087;&#1088;&#1080;&#1079;&#1085;&#1072;&#1095;&#1077;&#1085;&#1072; &#1083;&#1080;&#1096;&#1077; &#1076;&#1083;&#1103; &#1095;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;. &#1044;&#1083;&#1103; RouterOS &#1074;&#1080;&#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1086;&#1074;&#1091;&#1081;&#1090;&#1077; &#1074;&#1080;&#1093;&#1110;&#1076;&#1085;&#1080;&#1081; &#1092;&#1072;&#1081;&#1083;
+      <strong>MikroTik-local-editable-gateway.rsc</strong>.
+    </p>
+    <div class="legend">
+      <span class="command-key">&#1057;&#1080;&#1085;&#1110;&#1081;: RouterOS-&#1082;&#1086;&#1084;&#1072;&#1085;&#1076;&#1080;</span>
+      <span class="editable-key">&#1063;&#1077;&#1088;&#1074;&#1086;&#1085;&#1080;&#1081;: &#1079;&#1085;&#1072;&#1095;&#1077;&#1085;&#1085;&#1103; &#1072;&#1073;&#1086; &#1073;&#1083;&#1086;&#1082;&#1080; &#1076;&#1083;&#1103; &#1088;&#1077;&#1076;&#1072;&#1075;&#1091;&#1074;&#1072;&#1085;&#1085;&#1103;</span>
+      <span class="comment-key">&#1057;&#1110;&#1088;&#1080;&#1081;: &#1087;&#1086;&#1103;&#1089;&#1085;&#1077;&#1085;&#1085;&#1103; &#1090;&#1072; &#1082;&#1086;&#1084;&#1077;&#1085;&#1090;&#1072;&#1088;&#1110;</span>
+    </div>
+    <section class="code" aria-label="RouterOS configuration source">
+<div class="line comment"><span class="number">1</span><span class="text"># =============================================================================</span></div>
+<div class="line comment"><span class="number">2</span><span class="text"># MIKROTIK LOCAL EDITABLE GATEWAY TEMPLATE</span></div>
+<div class="line comment"><span class="number">3</span><span class="text"># =============================================================================</span></div>
+<div class="line comment"><span class="number">4</span><span class="text"># Target: RouterOS 7, clean configuration, new /interface wifi stack.</span></div>
+<div class="line comment"><span class="number">5</span><span class="text"># Delivery: local file upload only. No SSH, API, HTTP or HTTPS management.</span></div>
+<div class="line comment"><span class="number">6</span><span class="text">#</span></div>
+<div class="line comment"><span class="number">7</span><span class="text"># IMPORTANT:</span></div>
+<div class="line comment"><span class="number">8</span><span class="text"># 1. Make a backup/export before changing the router.</span></div>
+<div class="line comment"><span class="number">9</span><span class="text"># 2. This file expects:</span></div>
+<div class="line comment"><span class="number">10</span><span class="text">#       /system reset-configuration no-defaults=yes skip-backup=yes</span></div>
+<div class="line comment"><span class="number">11</span><span class="text">#    Reset is NOT executed by this file.</span></div>
+<div class="line editable"><span class="number">12</span><span class="text"># 3. Search for &quot;EDIT:&quot; and review every marked value.</span></div>
+<div class="line comment"><span class="number">13</span><span class="text"># 4. Do not store real WiFi passwords in GitHub.</span></div>
+<div class="line comment"><span class="number">14</span><span class="text"># 5. Test locally before import:</span></div>
+<div class="line comment"><span class="number">15</span><span class="text">#       /import file-name=MikroTik-local-editable-gateway.rsc \</span></div>
+<div class="line comment"><span class="number">16</span><span class="text">#           verbose=yes dry-run=yes</span></div>
+<div class="line comment"><span class="number">17</span><span class="text"># 6. Import only while local recovery is available: MAC Winbox or console.</span></div>
+<div class="line comment"><span class="number">18</span><span class="text">#</span></div>
+<div class="line comment"><span class="number">19</span><span class="text"># CURRENT EXAMPLE TOPOLOGY:</span></div>
+<div class="line comment"><span class="number">20</span><span class="text">#   ether1 = WAN, DHCP client</span></div>
+<div class="line comment"><span class="number">21</span><span class="text">#   ether2 = trunk, tagged VLAN 888/100/200</span></div>
+<div class="line comment"><span class="number">22</span><span class="text">#   ether3 = access VLAN 100 (WORK)</span></div>
+<div class="line comment"><span class="number">23</span><span class="text">#   ether5 = access VLAN 888 (MGMT)</span></div>
+<div class="line comment"><span class="number">24</span><span class="text">#   wifi1  = access VLAN 100 (WORK)</span></div>
+<div class="line comment"><span class="number">25</span><span class="text">#   wifi2  = access VLAN 200 (GUEST)</span></div>
+<div class="line comment"><span class="number">26</span><span class="text">#</span></div>
+<div class="line comment"><span class="number">27</span><span class="text"># VLAN 888 = MGMT  = 10.11.88.0/24</span></div>
+<div class="line comment"><span class="number">28</span><span class="text"># VLAN 100 = WORK  = 10.11.100.0/24</span></div>
+<div class="line comment"><span class="number">29</span><span class="text"># VLAN 200 = GUEST = 10.11.200.0/24</span></div>
+<div class="line comment"><span class="number">30</span><span class="text"># =============================================================================</span></div>
+<div class="line blank"><span class="number">31</span><span class="text"></span></div>
+<div class="line command"><span class="number">32</span><span class="text">:local cfgTag &quot;local-editable-gateway-v1&quot;</span></div>
+<div class="line blank"><span class="number">33</span><span class="text"></span></div>
+<div class="line comment"><span class="number">34</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">35</span><span class="text"># EDIT BLOCK: device-specific text values</span></div>
+<div class="line comment"><span class="number">36</span><span class="text"># Keep real passwords only in a local copy under manual/local/.</span></div>
+<div class="line comment"><span class="number">37</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">38</span><span class="text">:local routerName &quot;EDIT-MikroTik-Gateway&quot;</span></div>
+<div class="line editable"><span class="number">39</span><span class="text">:local workSsid &quot;EDIT-WORK-SSID&quot;</span></div>
+<div class="line editable"><span class="number">40</span><span class="text">:local guestSsid &quot;EDIT-GUEST-SSID&quot;</span></div>
+<div class="line editable"><span class="number">41</span><span class="text">:local workWifiPassword &quot;EDIT-WORK-WIFI-PASSWORD&quot;</span></div>
+<div class="line editable"><span class="number">42</span><span class="text">:local guestWifiPassword &quot;EDIT-GUEST-WIFI-PASSWORD&quot;</span></div>
+<div class="line blank"><span class="number">43</span><span class="text"></span></div>
+<div class="line comment"><span class="number">44</span><span class="text"># Refuse import while obvious placeholders are still present.</span></div>
+<div class="line editable"><span class="number">45</span><span class="text">:if ($routerName~&quot;^EDIT-&quot;) do={</span></div>
+<div class="line command"><span class="number">46</span><span class="text">    :error &quot;Replace all EDIT placeholders before import.&quot;</span></div>
+<div class="line command"><span class="number">47</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">48</span><span class="text">:if ($workSsid~&quot;^EDIT-&quot;) do={</span></div>
+<div class="line command"><span class="number">49</span><span class="text">    :error &quot;Replace all EDIT placeholders before import.&quot;</span></div>
+<div class="line command"><span class="number">50</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">51</span><span class="text">:if ($guestSsid~&quot;^EDIT-&quot;) do={</span></div>
+<div class="line command"><span class="number">52</span><span class="text">    :error &quot;Replace all EDIT placeholders before import.&quot;</span></div>
+<div class="line command"><span class="number">53</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">54</span><span class="text">:if ($workWifiPassword~&quot;^EDIT-&quot;) do={</span></div>
+<div class="line command"><span class="number">55</span><span class="text">    :error &quot;Replace all EDIT placeholders before import.&quot;</span></div>
+<div class="line command"><span class="number">56</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">57</span><span class="text">:if ($guestWifiPassword~&quot;^EDIT-&quot;) do={</span></div>
+<div class="line command"><span class="number">58</span><span class="text">    :error &quot;Replace all EDIT placeholders before import.&quot;</span></div>
+<div class="line command"><span class="number">59</span><span class="text">}</span></div>
+<div class="line blank"><span class="number">60</span><span class="text"></span></div>
+<div class="line command"><span class="number">61</span><span class="text">:log info (&quot;Starting $cfgTag&quot;)</span></div>
+<div class="line blank"><span class="number">62</span><span class="text"></span></div>
+<div class="line comment"><span class="number">63</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">64</span><span class="text"># SAFETY GUARD</span></div>
+<div class="line comment"><span class="number">65</span><span class="text"># Remove these checks only when intentionally converting this file into a</span></div>
+<div class="line comment"><span class="number">66</span><span class="text"># migration script for an existing configuration.</span></div>
+<div class="line comment"><span class="number">67</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">68</span><span class="text">:if ([:len [/interface bridge find]] &gt; 0) do={</span></div>
+<div class="line command"><span class="number">69</span><span class="text">    :error &quot;Existing bridge found. This template requires a clean config.&quot;</span></div>
+<div class="line command"><span class="number">70</span><span class="text">}</span></div>
+<div class="line command"><span class="number">71</span><span class="text">:if ([:len [/ip address find]] &gt; 0) do={</span></div>
+<div class="line command"><span class="number">72</span><span class="text">    :error &quot;Existing IP addresses found. This template requires a clean config.&quot;</span></div>
+<div class="line command"><span class="number">73</span><span class="text">}</span></div>
+<div class="line command"><span class="number">74</span><span class="text">:if ([:len [/ip firewall filter find]] &gt; 0) do={</span></div>
+<div class="line command"><span class="number">75</span><span class="text">    :error &quot;Existing firewall found. This template requires a clean config.&quot;</span></div>
+<div class="line command"><span class="number">76</span><span class="text">}</span></div>
+<div class="line blank"><span class="number">77</span><span class="text"></span></div>
+<div class="line comment"><span class="number">78</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">79</span><span class="text"># INTERFACE PREFLIGHT</span></div>
+<div class="line editable"><span class="number">80</span><span class="text"># EDIT: change interface names here and everywhere below when hardware differs.</span></div>
+<div class="line comment"><span class="number">81</span><span class="text"># Delete WiFi checks if the device has no local WiFi.</span></div>
+<div class="line comment"><span class="number">82</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">83</span><span class="text">:if ([:len [/interface find where name=&quot;ether1&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">84</span><span class="text">    :error &quot;Missing interface ether1 (WAN)&quot;</span></div>
+<div class="line editable"><span class="number">85</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">86</span><span class="text">:if ([:len [/interface find where name=&quot;ether2&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">87</span><span class="text">    :error &quot;Missing interface ether2 (TRUNK)&quot;</span></div>
+<div class="line editable"><span class="number">88</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">89</span><span class="text">:if ([:len [/interface find where name=&quot;ether3&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">90</span><span class="text">    :error &quot;Missing interface ether3 (WORK ACCESS)&quot;</span></div>
+<div class="line editable"><span class="number">91</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">92</span><span class="text">:if ([:len [/interface find where name=&quot;ether5&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">93</span><span class="text">    :error &quot;Missing interface ether5 (MGMT ACCESS)&quot;</span></div>
+<div class="line editable"><span class="number">94</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">95</span><span class="text">:if ([:len [/interface find where name=&quot;wifi1&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">96</span><span class="text">    :error &quot;Missing interface wifi1 (WORK)&quot;</span></div>
+<div class="line editable"><span class="number">97</span><span class="text">}</span></div>
+<div class="line editable"><span class="number">98</span><span class="text">:if ([:len [/interface find where name=&quot;wifi2&quot;]] = 0) do={</span></div>
+<div class="line editable"><span class="number">99</span><span class="text">    :error &quot;Missing interface wifi2 (GUEST)&quot;</span></div>
+<div class="line editable"><span class="number">100</span><span class="text">}</span></div>
+<div class="line blank"><span class="number">101</span><span class="text"></span></div>
+<div class="line comment"><span class="number">102</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">103</span><span class="text"># DEVICE IDENTITY</span></div>
+<div class="line editable"><span class="number">104</span><span class="text"># EDIT: router name and time zone.</span></div>
+<div class="line comment"><span class="number">105</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">106</span><span class="text">/system identity</span></div>
+<div class="line editable"><span class="number">107</span><span class="text">set name=$routerName</span></div>
+<div class="line blank"><span class="number">108</span><span class="text"></span></div>
+<div class="line command"><span class="number">109</span><span class="text">/system clock</span></div>
+<div class="line command"><span class="number">110</span><span class="text">set time-zone-name=&quot;Europe/Kyiv&quot;</span></div>
+<div class="line blank"><span class="number">111</span><span class="text"></span></div>
+<div class="line comment"><span class="number">112</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">113</span><span class="text"># BRIDGE</span></div>
+<div class="line comment"><span class="number">114</span><span class="text"># VLAN filtering stays disabled until the final section to reduce lockout risk.</span></div>
+<div class="line comment"><span class="number">115</span><span class="text"># The bridge itself is the CPU port and accepts only tagged VLAN traffic.</span></div>
+<div class="line editable"><span class="number">116</span><span class="text"># EDIT: rename bridge-vlan only if all references below are changed too.</span></div>
+<div class="line comment"><span class="number">117</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">118</span><span class="text">/interface bridge</span></div>
+<div class="line editable"><span class="number">119</span><span class="text">add name=&quot;bridge-vlan&quot; \</span></div>
+<div class="line editable"><span class="number">120</span><span class="text">    protocol-mode=rstp \</span></div>
+<div class="line editable"><span class="number">121</span><span class="text">    vlan-filtering=no \</span></div>
+<div class="line editable"><span class="number">122</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line editable"><span class="number">123</span><span class="text">    frame-types=admit-only-vlan-tagged \</span></div>
+<div class="line editable"><span class="number">124</span><span class="text">    comment=&quot;MAIN VLAN BRIDGE&quot;</span></div>
+<div class="line blank"><span class="number">125</span><span class="text"></span></div>
+<div class="line comment"><span class="number">126</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">127</span><span class="text"># INTERFACE LISTS</span></div>
+<div class="line comment"><span class="number">128</span><span class="text"># WAN is used by firewall/NAT. LAN contains routed VLAN interfaces.</span></div>
+<div class="line comment"><span class="number">129</span><span class="text"># MGMT contains only the management VLAN interface.</span></div>
+<div class="line comment"><span class="number">130</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">131</span><span class="text">/interface list</span></div>
+<div class="line command"><span class="number">132</span><span class="text">add name=WAN comment=&quot;Internet uplinks&quot;</span></div>
+<div class="line command"><span class="number">133</span><span class="text">add name=LAN comment=&quot;Local routed VLANs&quot;</span></div>
+<div class="line command"><span class="number">134</span><span class="text">add name=MGMT comment=&quot;Local management only&quot;</span></div>
+<div class="line blank"><span class="number">135</span><span class="text"></span></div>
+<div class="line command"><span class="number">136</span><span class="text">/interface list member</span></div>
+<div class="line command"><span class="number">137</span><span class="text">add interface=ether1 list=WAN comment=&quot;EDIT: WAN&quot;</span></div>
+<div class="line blank"><span class="number">138</span><span class="text"></span></div>
+<div class="line comment"><span class="number">139</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">140</span><span class="text"># L3 VLAN INTERFACES</span></div>
+<div class="line comment"><span class="number">141</span><span class="text"># These interfaces terminate VLANs on the router CPU.</span></div>
+<div class="line editable"><span class="number">142</span><span class="text"># EDIT: VLAN IDs and names when the task requires different networks.</span></div>
+<div class="line comment"><span class="number">143</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">144</span><span class="text">/interface vlan</span></div>
+<div class="line editable"><span class="number">145</span><span class="text">add interface=bridge-vlan name=vlan888-mgmt vlan-id=888 \</span></div>
+<div class="line editable"><span class="number">146</span><span class="text">    comment=&quot;MGMT VLAN&quot;</span></div>
+<div class="line editable"><span class="number">147</span><span class="text">add interface=bridge-vlan name=vlan100-work vlan-id=100 \</span></div>
+<div class="line editable"><span class="number">148</span><span class="text">    comment=&quot;WORK VLAN&quot;</span></div>
+<div class="line editable"><span class="number">149</span><span class="text">add interface=bridge-vlan name=vlan200-guest vlan-id=200 \</span></div>
+<div class="line editable"><span class="number">150</span><span class="text">    comment=&quot;GUEST VLAN&quot;</span></div>
+<div class="line blank"><span class="number">151</span><span class="text"></span></div>
+<div class="line command"><span class="number">152</span><span class="text">/interface list member</span></div>
+<div class="line command"><span class="number">153</span><span class="text">add interface=vlan888-mgmt list=LAN</span></div>
+<div class="line command"><span class="number">154</span><span class="text">add interface=vlan888-mgmt list=MGMT</span></div>
+<div class="line command"><span class="number">155</span><span class="text">add interface=ether5 list=MGMT comment=&quot;Local MAC Winbox recovery&quot;</span></div>
+<div class="line command"><span class="number">156</span><span class="text">add interface=vlan100-work list=LAN</span></div>
+<div class="line command"><span class="number">157</span><span class="text">add interface=vlan200-guest list=LAN</span></div>
+<div class="line blank"><span class="number">158</span><span class="text"></span></div>
+<div class="line comment"><span class="number">159</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">160</span><span class="text"># WIFI SECURITY AND SSIDS</span></div>
+<div class="line editable"><span class="number">161</span><span class="text"># EDIT: country, SSIDs and both passphrases.</span></div>
+<div class="line comment"><span class="number">162</span><span class="text"># Never commit a copy containing real passphrases.</span></div>
+<div class="line comment"><span class="number">163</span><span class="text"># If the router uses legacy /interface wireless, replace this whole section.</span></div>
+<div class="line comment"><span class="number">164</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">165</span><span class="text">/interface wifi security</span></div>
+<div class="line editable"><span class="number">166</span><span class="text">add name=sec-work \</span></div>
+<div class="line editable"><span class="number">167</span><span class="text">    authentication-types=wpa2-psk,wpa3-psk \</span></div>
+<div class="line editable"><span class="number">168</span><span class="text">    passphrase=$workWifiPassword</span></div>
+<div class="line editable"><span class="number">169</span><span class="text">add name=sec-guest \</span></div>
+<div class="line editable"><span class="number">170</span><span class="text">    authentication-types=wpa2-psk,wpa3-psk \</span></div>
+<div class="line editable"><span class="number">171</span><span class="text">    passphrase=$guestWifiPassword</span></div>
+<div class="line blank"><span class="number">172</span><span class="text"></span></div>
+<div class="line command"><span class="number">173</span><span class="text">/interface wifi datapath</span></div>
+<div class="line command"><span class="number">174</span><span class="text">add name=dp-work client-isolation=no</span></div>
+<div class="line command"><span class="number">175</span><span class="text">add name=dp-guest client-isolation=yes</span></div>
+<div class="line blank"><span class="number">176</span><span class="text"></span></div>
+<div class="line command"><span class="number">177</span><span class="text">/interface wifi configuration</span></div>
+<div class="line command"><span class="number">178</span><span class="text">add name=cfg-work \</span></div>
+<div class="line command"><span class="number">179</span><span class="text">    mode=ap \</span></div>
+<div class="line command"><span class="number">180</span><span class="text">    ssid=$workSsid \</span></div>
+<div class="line command"><span class="number">181</span><span class="text">    country=&quot;Ukraine&quot; \</span></div>
+<div class="line command"><span class="number">182</span><span class="text">    installation=indoor \</span></div>
+<div class="line command"><span class="number">183</span><span class="text">    security=sec-work \</span></div>
+<div class="line command"><span class="number">184</span><span class="text">    datapath=dp-work</span></div>
+<div class="line command"><span class="number">185</span><span class="text">add name=cfg-guest \</span></div>
+<div class="line command"><span class="number">186</span><span class="text">    mode=ap \</span></div>
+<div class="line command"><span class="number">187</span><span class="text">    ssid=$guestSsid \</span></div>
+<div class="line command"><span class="number">188</span><span class="text">    country=&quot;Ukraine&quot; \</span></div>
+<div class="line command"><span class="number">189</span><span class="text">    installation=indoor \</span></div>
+<div class="line command"><span class="number">190</span><span class="text">    security=sec-guest \</span></div>
+<div class="line command"><span class="number">191</span><span class="text">    datapath=dp-guest</span></div>
+<div class="line blank"><span class="number">192</span><span class="text"></span></div>
+<div class="line command"><span class="number">193</span><span class="text">/interface wifi</span></div>
+<div class="line command"><span class="number">194</span><span class="text">set [find where default-name=wifi1] configuration=cfg-work disabled=no</span></div>
+<div class="line command"><span class="number">195</span><span class="text">set [find where default-name=wifi2] configuration=cfg-guest disabled=no</span></div>
+<div class="line blank"><span class="number">196</span><span class="text"></span></div>
+<div class="line comment"><span class="number">197</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">198</span><span class="text"># BRIDGE PORTS</span></div>
+<div class="line comment"><span class="number">199</span><span class="text"># Trunk: accepts tagged frames only.</span></div>
+<div class="line comment"><span class="number">200</span><span class="text"># Access: accepts untagged frames and assigns the configured PVID.</span></div>
+<div class="line editable"><span class="number">201</span><span class="text"># EDIT: add/remove access ports according to the device task.</span></div>
+<div class="line comment"><span class="number">202</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">203</span><span class="text">/interface bridge port</span></div>
+<div class="line editable"><span class="number">204</span><span class="text">add bridge=bridge-vlan interface=ether2 \</span></div>
+<div class="line editable"><span class="number">205</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line editable"><span class="number">206</span><span class="text">    frame-types=admit-only-vlan-tagged \</span></div>
+<div class="line editable"><span class="number">207</span><span class="text">    comment=&quot;TRUNK VLAN 888,100,200&quot;</span></div>
+<div class="line blank"><span class="number">208</span><span class="text"></span></div>
+<div class="line command"><span class="number">209</span><span class="text">add bridge=bridge-vlan interface=ether5 pvid=888 \</span></div>
+<div class="line command"><span class="number">210</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line command"><span class="number">211</span><span class="text">    frame-types=admit-only-untagged-and-priority-tagged \</span></div>
+<div class="line command"><span class="number">212</span><span class="text">    comment=&quot;MGMT ACCESS VLAN 888&quot;</span></div>
+<div class="line blank"><span class="number">213</span><span class="text"></span></div>
+<div class="line command"><span class="number">214</span><span class="text">add bridge=bridge-vlan interface=ether3 pvid=100 \</span></div>
+<div class="line command"><span class="number">215</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line command"><span class="number">216</span><span class="text">    frame-types=admit-only-untagged-and-priority-tagged \</span></div>
+<div class="line command"><span class="number">217</span><span class="text">    comment=&quot;WORK ACCESS VLAN 100&quot;</span></div>
+<div class="line blank"><span class="number">218</span><span class="text"></span></div>
+<div class="line command"><span class="number">219</span><span class="text">add bridge=bridge-vlan interface=wifi1 pvid=100 \</span></div>
+<div class="line command"><span class="number">220</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line command"><span class="number">221</span><span class="text">    frame-types=admit-only-untagged-and-priority-tagged \</span></div>
+<div class="line command"><span class="number">222</span><span class="text">    comment=&quot;WORK WIFI VLAN 100&quot;</span></div>
+<div class="line blank"><span class="number">223</span><span class="text"></span></div>
+<div class="line command"><span class="number">224</span><span class="text">add bridge=bridge-vlan interface=wifi2 pvid=200 \</span></div>
+<div class="line command"><span class="number">225</span><span class="text">    ingress-filtering=yes \</span></div>
+<div class="line command"><span class="number">226</span><span class="text">    frame-types=admit-only-untagged-and-priority-tagged \</span></div>
+<div class="line command"><span class="number">227</span><span class="text">    comment=&quot;GUEST WIFI VLAN 200&quot;</span></div>
+<div class="line blank"><span class="number">228</span><span class="text"></span></div>
+<div class="line comment"><span class="number">229</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">230</span><span class="text"># BRIDGE VLAN TABLE</span></div>
+<div class="line comment"><span class="number">231</span><span class="text"># Keep one entry per VLAN when access ports are present.</span></div>
+<div class="line comment"><span class="number">232</span><span class="text"># bridge-vlan is tagged because the router CPU terminates all three VLANs.</span></div>
+<div class="line comment"><span class="number">233</span><span class="text"># ether2 is tagged because it is the trunk.</span></div>
+<div class="line editable"><span class="number">234</span><span class="text"># EDIT: keep this table synchronized with bridge port PVID values.</span></div>
+<div class="line comment"><span class="number">235</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">236</span><span class="text">/interface bridge vlan</span></div>
+<div class="line editable"><span class="number">237</span><span class="text">add bridge=bridge-vlan vlan-ids=888 \</span></div>
+<div class="line editable"><span class="number">238</span><span class="text">    tagged=bridge-vlan,ether2 \</span></div>
+<div class="line editable"><span class="number">239</span><span class="text">    untagged=ether5 \</span></div>
+<div class="line editable"><span class="number">240</span><span class="text">    comment=&quot;MGMT VLAN&quot;</span></div>
+<div class="line blank"><span class="number">241</span><span class="text"></span></div>
+<div class="line command"><span class="number">242</span><span class="text">add bridge=bridge-vlan vlan-ids=100 \</span></div>
+<div class="line command"><span class="number">243</span><span class="text">    tagged=bridge-vlan,ether2 \</span></div>
+<div class="line command"><span class="number">244</span><span class="text">    untagged=ether3,wifi1 \</span></div>
+<div class="line command"><span class="number">245</span><span class="text">    comment=&quot;WORK VLAN&quot;</span></div>
+<div class="line blank"><span class="number">246</span><span class="text"></span></div>
+<div class="line command"><span class="number">247</span><span class="text">add bridge=bridge-vlan vlan-ids=200 \</span></div>
+<div class="line command"><span class="number">248</span><span class="text">    tagged=bridge-vlan,ether2 \</span></div>
+<div class="line command"><span class="number">249</span><span class="text">    untagged=wifi2 \</span></div>
+<div class="line command"><span class="number">250</span><span class="text">    comment=&quot;GUEST VLAN&quot;</span></div>
+<div class="line blank"><span class="number">251</span><span class="text"></span></div>
+<div class="line comment"><span class="number">252</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">253</span><span class="text"># ROUTER ADDRESSES</span></div>
+<div class="line editable"><span class="number">254</span><span class="text"># EDIT: gateway addresses when subnets change.</span></div>
+<div class="line comment"><span class="number">255</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">256</span><span class="text">/ip address</span></div>
+<div class="line editable"><span class="number">257</span><span class="text">add address=10.11.88.1/24 interface=vlan888-mgmt comment=&quot;MGMT gateway&quot;</span></div>
+<div class="line editable"><span class="number">258</span><span class="text">add address=10.11.100.1/24 interface=vlan100-work comment=&quot;WORK gateway&quot;</span></div>
+<div class="line editable"><span class="number">259</span><span class="text">add address=10.11.200.1/24 interface=vlan200-guest comment=&quot;GUEST gateway&quot;</span></div>
+<div class="line blank"><span class="number">260</span><span class="text"></span></div>
+<div class="line comment"><span class="number">261</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">262</span><span class="text"># DHCP</span></div>
+<div class="line editable"><span class="number">263</span><span class="text"># EDIT: pools, lease times, gateways and DNS servers.</span></div>
+<div class="line comment"><span class="number">264</span><span class="text"># Do not overlap pools with gateways or statically assigned addresses.</span></div>
+<div class="line comment"><span class="number">265</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">266</span><span class="text">/ip pool</span></div>
+<div class="line editable"><span class="number">267</span><span class="text">add name=pool-vlan888 ranges=10.11.88.10-10.11.88.50 \</span></div>
+<div class="line editable"><span class="number">268</span><span class="text">    comment=&quot;MGMT pool&quot;</span></div>
+<div class="line editable"><span class="number">269</span><span class="text">add name=pool-vlan100 ranges=10.11.100.10-10.11.100.100 \</span></div>
+<div class="line editable"><span class="number">270</span><span class="text">    comment=&quot;WORK pool&quot;</span></div>
+<div class="line editable"><span class="number">271</span><span class="text">add name=pool-vlan200 ranges=10.11.200.10-10.11.200.100 \</span></div>
+<div class="line editable"><span class="number">272</span><span class="text">    comment=&quot;GUEST pool&quot;</span></div>
+<div class="line blank"><span class="number">273</span><span class="text"></span></div>
+<div class="line command"><span class="number">274</span><span class="text">/ip dhcp-server</span></div>
+<div class="line command"><span class="number">275</span><span class="text">add name=dhcp-vlan888 interface=vlan888-mgmt \</span></div>
+<div class="line command"><span class="number">276</span><span class="text">    address-pool=pool-vlan888 lease-time=1h disabled=no</span></div>
+<div class="line command"><span class="number">277</span><span class="text">add name=dhcp-vlan100 interface=vlan100-work \</span></div>
+<div class="line command"><span class="number">278</span><span class="text">    address-pool=pool-vlan100 lease-time=1h disabled=no</span></div>
+<div class="line command"><span class="number">279</span><span class="text">add name=dhcp-vlan200 interface=vlan200-guest \</span></div>
+<div class="line command"><span class="number">280</span><span class="text">    address-pool=pool-vlan200 lease-time=1h disabled=no</span></div>
+<div class="line blank"><span class="number">281</span><span class="text"></span></div>
+<div class="line command"><span class="number">282</span><span class="text">/ip dhcp-server network</span></div>
+<div class="line command"><span class="number">283</span><span class="text">add address=10.11.88.0/24 gateway=10.11.88.1 \</span></div>
+<div class="line command"><span class="number">284</span><span class="text">    dns-server=1.1.1.1,8.8.8.8 comment=&quot;MGMT network&quot;</span></div>
+<div class="line command"><span class="number">285</span><span class="text">add address=10.11.100.0/24 gateway=10.11.100.1 \</span></div>
+<div class="line command"><span class="number">286</span><span class="text">    dns-server=1.1.1.1,8.8.8.8 comment=&quot;WORK network&quot;</span></div>
+<div class="line command"><span class="number">287</span><span class="text">add address=10.11.200.0/24 gateway=10.11.200.1 \</span></div>
+<div class="line command"><span class="number">288</span><span class="text">    dns-server=1.1.1.1,8.8.8.8 comment=&quot;GUEST network&quot;</span></div>
+<div class="line blank"><span class="number">289</span><span class="text"></span></div>
+<div class="line comment"><span class="number">290</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">291</span><span class="text"># WAN</span></div>
+<div class="line comment"><span class="number">292</span><span class="text"># Current example expects DHCP from the ISP on ether1.</span></div>
+<div class="line editable"><span class="number">293</span><span class="text"># EDIT: replace this section for static IP, PPPoE or another WAN method.</span></div>
+<div class="line comment"><span class="number">294</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">295</span><span class="text">/ip dhcp-client</span></div>
+<div class="line editable"><span class="number">296</span><span class="text">add interface=ether1 \</span></div>
+<div class="line editable"><span class="number">297</span><span class="text">    add-default-route=yes \</span></div>
+<div class="line editable"><span class="number">298</span><span class="text">    use-peer-dns=no \</span></div>
+<div class="line editable"><span class="number">299</span><span class="text">    disabled=no \</span></div>
+<div class="line editable"><span class="number">300</span><span class="text">    comment=&quot;WAN DHCP&quot;</span></div>
+<div class="line blank"><span class="number">301</span><span class="text"></span></div>
+<div class="line command"><span class="number">302</span><span class="text">/ip dns</span></div>
+<div class="line command"><span class="number">303</span><span class="text">set servers=1.1.1.1,8.8.8.8 allow-remote-requests=no</span></div>
+<div class="line blank"><span class="number">304</span><span class="text"></span></div>
+<div class="line comment"><span class="number">305</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">306</span><span class="text"># FIREWALL ADDRESS LISTS</span></div>
+<div class="line comment"><span class="number">307</span><span class="text"># LOCAL_SUBNETS is used for NAT policy and inter-VLAN isolation.</span></div>
+<div class="line comment"><span class="number">308</span><span class="text"># MGMT_SUBNETS is allowed to manage the router through local Winbox.</span></div>
+<div class="line comment"><span class="number">309</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">310</span><span class="text">/ip firewall address-list</span></div>
+<div class="line command"><span class="number">311</span><span class="text">add list=LOCAL_SUBNETS address=10.11.88.0/24 comment=&quot;MGMT&quot;</span></div>
+<div class="line command"><span class="number">312</span><span class="text">add list=LOCAL_SUBNETS address=10.11.100.0/24 comment=&quot;WORK&quot;</span></div>
+<div class="line command"><span class="number">313</span><span class="text">add list=LOCAL_SUBNETS address=10.11.200.0/24 comment=&quot;GUEST&quot;</span></div>
+<div class="line command"><span class="number">314</span><span class="text">add list=MGMT_SUBNETS address=10.11.88.0/24 comment=&quot;MGMT only&quot;</span></div>
+<div class="line blank"><span class="number">315</span><span class="text"></span></div>
+<div class="line comment"><span class="number">316</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">317</span><span class="text"># INPUT FIREWALL: traffic to the router itself.</span></div>
+<div class="line comment"><span class="number">318</span><span class="text"># SSH/API/Web are disabled later. Local Winbox is allowed only from MGMT.</span></div>
+<div class="line comment"><span class="number">319</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">320</span><span class="text">/ip firewall filter</span></div>
+<div class="line command"><span class="number">321</span><span class="text">add chain=input action=accept \</span></div>
+<div class="line command"><span class="number">322</span><span class="text">    connection-state=established,related,untracked \</span></div>
+<div class="line command"><span class="number">323</span><span class="text">    comment=&quot;INPUT established&quot;</span></div>
+<div class="line command"><span class="number">324</span><span class="text">add chain=input action=drop connection-state=invalid \</span></div>
+<div class="line command"><span class="number">325</span><span class="text">    comment=&quot;INPUT invalid&quot;</span></div>
+<div class="line command"><span class="number">326</span><span class="text">add chain=input action=accept protocol=icmp \</span></div>
+<div class="line command"><span class="number">327</span><span class="text">    comment=&quot;INPUT ICMP&quot;</span></div>
+<div class="line command"><span class="number">328</span><span class="text">add chain=input action=accept protocol=udp src-port=68 dst-port=67 \</span></div>
+<div class="line command"><span class="number">329</span><span class="text">    in-interface-list=LAN \</span></div>
+<div class="line command"><span class="number">330</span><span class="text">    comment=&quot;INPUT DHCP&quot;</span></div>
+<div class="line command"><span class="number">331</span><span class="text">add chain=input action=accept src-address-list=MGMT_SUBNETS \</span></div>
+<div class="line command"><span class="number">332</span><span class="text">    comment=&quot;INPUT local management&quot;</span></div>
+<div class="line command"><span class="number">333</span><span class="text">add chain=input action=drop \</span></div>
+<div class="line command"><span class="number">334</span><span class="text">    comment=&quot;INPUT drop all&quot;</span></div>
+<div class="line blank"><span class="number">335</span><span class="text"></span></div>
+<div class="line comment"><span class="number">336</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">337</span><span class="text"># FORWARD FIREWALL: traffic through the router.</span></div>
+<div class="line comment"><span class="number">338</span><span class="text"># All local VLANs can reach WAN. Routing between local VLANs is blocked.</span></div>
+<div class="line editable"><span class="number">339</span><span class="text"># EDIT: add explicit allow rules BEFORE &quot;FORWARD isolate VLANs&quot; when needed.</span></div>
+<div class="line comment"><span class="number">340</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line editable"><span class="number">341</span><span class="text">add chain=forward action=fasttrack-connection \</span></div>
+<div class="line editable"><span class="number">342</span><span class="text">    connection-state=established,related hw-offload=yes \</span></div>
+<div class="line editable"><span class="number">343</span><span class="text">    comment=&quot;FORWARD fasttrack&quot;</span></div>
+<div class="line editable"><span class="number">344</span><span class="text">add chain=forward action=accept \</span></div>
+<div class="line editable"><span class="number">345</span><span class="text">    connection-state=established,related,untracked \</span></div>
+<div class="line editable"><span class="number">346</span><span class="text">    comment=&quot;FORWARD established&quot;</span></div>
+<div class="line editable"><span class="number">347</span><span class="text">add chain=forward action=drop connection-state=invalid \</span></div>
+<div class="line editable"><span class="number">348</span><span class="text">    comment=&quot;FORWARD invalid&quot;</span></div>
+<div class="line editable"><span class="number">349</span><span class="text">add chain=forward action=accept \</span></div>
+<div class="line editable"><span class="number">350</span><span class="text">    src-address-list=LOCAL_SUBNETS out-interface-list=WAN \</span></div>
+<div class="line editable"><span class="number">351</span><span class="text">    comment=&quot;FORWARD local to internet&quot;</span></div>
+<div class="line editable"><span class="number">352</span><span class="text">add chain=forward action=drop \</span></div>
+<div class="line editable"><span class="number">353</span><span class="text">    src-address-list=LOCAL_SUBNETS dst-address-list=LOCAL_SUBNETS \</span></div>
+<div class="line editable"><span class="number">354</span><span class="text">    comment=&quot;FORWARD isolate VLANs&quot;</span></div>
+<div class="line editable"><span class="number">355</span><span class="text">add chain=forward action=drop \</span></div>
+<div class="line editable"><span class="number">356</span><span class="text">    connection-state=new in-interface-list=WAN connection-nat-state=!dstnat \</span></div>
+<div class="line editable"><span class="number">357</span><span class="text">    comment=&quot;FORWARD drop unsolicited WAN&quot;</span></div>
+<div class="line editable"><span class="number">358</span><span class="text">add chain=forward action=drop \</span></div>
+<div class="line editable"><span class="number">359</span><span class="text">    comment=&quot;FORWARD drop all&quot;</span></div>
+<div class="line blank"><span class="number">360</span><span class="text"></span></div>
+<div class="line comment"><span class="number">361</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">362</span><span class="text"># NAT</span></div>
+<div class="line comment"><span class="number">363</span><span class="text"># Masquerade is appropriate here because the WAN address is received by DHCP.</span></div>
+<div class="line comment"><span class="number">364</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">365</span><span class="text">/ip firewall nat</span></div>
+<div class="line command"><span class="number">366</span><span class="text">add chain=srcnat action=masquerade out-interface-list=WAN \</span></div>
+<div class="line command"><span class="number">367</span><span class="text">    comment=&quot;NAT dynamic WAN&quot;</span></div>
+<div class="line blank"><span class="number">368</span><span class="text"></span></div>
+<div class="line comment"><span class="number">369</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">370</span><span class="text"># MANAGEMENT SERVICES</span></div>
+<div class="line comment"><span class="number">371</span><span class="text"># Policy: no SSH, API, HTTP or HTTPS management.</span></div>
+<div class="line comment"><span class="number">372</span><span class="text"># Winbox remains available only from the local MGMT subnet.</span></div>
+<div class="line comment"><span class="number">373</span><span class="text"># If network Winbox is also prohibited, set winbox disabled=yes and use console.</span></div>
+<div class="line comment"><span class="number">374</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">375</span><span class="text">/ip service</span></div>
+<div class="line command"><span class="number">376</span><span class="text">set [find where name=telnet] disabled=yes</span></div>
+<div class="line command"><span class="number">377</span><span class="text">set [find where name=ftp] disabled=yes</span></div>
+<div class="line command"><span class="number">378</span><span class="text">set [find where name=www] disabled=yes</span></div>
+<div class="line command"><span class="number">379</span><span class="text">set [find where name=www-ssl] disabled=yes</span></div>
+<div class="line command"><span class="number">380</span><span class="text">set [find where name=ssh] disabled=yes</span></div>
+<div class="line command"><span class="number">381</span><span class="text">set [find where name=api] disabled=yes</span></div>
+<div class="line command"><span class="number">382</span><span class="text">set [find where name=api-ssl] disabled=yes</span></div>
+<div class="line command"><span class="number">383</span><span class="text">set [find where name=winbox] disabled=no address=10.11.88.0/24</span></div>
+<div class="line blank"><span class="number">384</span><span class="text"></span></div>
+<div class="line comment"><span class="number">385</span><span class="text"># Limit local discovery and MAC Winbox to the management interface list.</span></div>
+<div class="line command"><span class="number">386</span><span class="text">/ip neighbor discovery-settings</span></div>
+<div class="line command"><span class="number">387</span><span class="text">set discover-interface-list=MGMT</span></div>
+<div class="line blank"><span class="number">388</span><span class="text"></span></div>
+<div class="line command"><span class="number">389</span><span class="text">/tool mac-server</span></div>
+<div class="line command"><span class="number">390</span><span class="text">set allowed-interface-list=none</span></div>
+<div class="line blank"><span class="number">391</span><span class="text"></span></div>
+<div class="line command"><span class="number">392</span><span class="text">/tool mac-server mac-winbox</span></div>
+<div class="line command"><span class="number">393</span><span class="text">set allowed-interface-list=MGMT</span></div>
+<div class="line blank"><span class="number">394</span><span class="text"></span></div>
+<div class="line command"><span class="number">395</span><span class="text">/tool bandwidth-server</span></div>
+<div class="line command"><span class="number">396</span><span class="text">set enabled=no</span></div>
+<div class="line blank"><span class="number">397</span><span class="text"></span></div>
+<div class="line command"><span class="number">398</span><span class="text">/tool romon</span></div>
+<div class="line command"><span class="number">399</span><span class="text">set enabled=no</span></div>
+<div class="line blank"><span class="number">400</span><span class="text"></span></div>
+<div class="line comment"><span class="number">401</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line comment"><span class="number">402</span><span class="text"># ENABLE VLAN FILTERING LAST</span></div>
+<div class="line comment"><span class="number">403</span><span class="text"># This command can disconnect the current session. Local recovery must be ready.</span></div>
+<div class="line comment"><span class="number">404</span><span class="text"># -----------------------------------------------------------------------------</span></div>
+<div class="line command"><span class="number">405</span><span class="text">/interface bridge</span></div>
+<div class="line command"><span class="number">406</span><span class="text">set [find where name=bridge-vlan] vlan-filtering=yes</span></div>
+<div class="line blank"><span class="number">407</span><span class="text"></span></div>
+<div class="line command"><span class="number">408</span><span class="text">:log info (&quot;Completed $cfgTag&quot;)</span></div>
+<div class="line blank"><span class="number">409</span><span class="text"></span></div>
+<div class="line comment"><span class="number">410</span><span class="text"># =============================================================================</span></div>
+<div class="line comment"><span class="number">411</span><span class="text"># POST-IMPORT CHECKLIST (run manually; these lines are comments)</span></div>
+<div class="line comment"><span class="number">412</span><span class="text"># =============================================================================</span></div>
+<div class="line comment"><span class="number">413</span><span class="text"># /interface bridge vlan print</span></div>
+<div class="line comment"><span class="number">414</span><span class="text"># /interface bridge port print</span></div>
+<div class="line comment"><span class="number">415</span><span class="text"># /interface vlan print</span></div>
+<div class="line comment"><span class="number">416</span><span class="text"># /ip address print</span></div>
+<div class="line comment"><span class="number">417</span><span class="text"># /ip dhcp-server print</span></div>
+<div class="line comment"><span class="number">418</span><span class="text"># /ip firewall filter print stats</span></div>
+<div class="line comment"><span class="number">419</span><span class="text"># /ip service print</span></div>
+<div class="line comment"><span class="number">420</span><span class="text"># /ping 1.1.1.1</span></div>
+<div class="line comment"><span class="number">421</span><span class="text">#</span></div>
+<div class="line comment"><span class="number">422</span><span class="text"># Expected client networks:</span></div>
+<div class="line comment"><span class="number">423</span><span class="text">#   ether5      -&gt; 10.11.88.0/24</span></div>
+<div class="line comment"><span class="number">424</span><span class="text">#   ether3      -&gt; 10.11.100.0/24</span></div>
+<div class="line comment"><span class="number">425</span><span class="text">#   WORK WiFi   -&gt; 10.11.100.0/24</span></div>
+<div class="line comment"><span class="number">426</span><span class="text">#   GUEST WiFi  -&gt; 10.11.200.0/24</span></div>
+<div class="line comment"><span class="number">427</span><span class="text"># =============================================================================</span></div>
+
+    </section>
+  </main>
+</body>
+</html>
