@@ -22,6 +22,7 @@ $profiles = @(
         Role = "access-point"
     }
 )
+$manualTemplate = Join-Path $PSScriptRoot "manual/MikroTik-local-editable-gateway.rsc"
 
 $tokens = $null
 $parseErrors = $null
@@ -63,6 +64,16 @@ try {
             throw "VLAN filtering is enabled too early in $($profile.Expected)"
         }
 
+        foreach ($service in @("ssh", "api", "api-ssl", "www", "www-ssl")) {
+            if (-not $actual.Contains("set [find where name=$service] disabled=yes")) {
+                throw "Prohibited service '$service' is not disabled in $($profile.Expected)."
+            }
+
+            if ($actual.Contains("set [find where name=$service] disabled=no")) {
+                throw "Prohibited service '$service' is enabled in $($profile.Expected)."
+            }
+        }
+
         if ($profile.Role -eq "gateway") {
             if ($actual.Contains("action=redirect")) {
                 throw "Unexpected DNS redirect in gateway output."
@@ -84,6 +95,40 @@ try {
 
         Write-Host "OK: $([System.IO.Path]::GetFileName($profile.Expected))"
     }
+
+    $manual = Get-Content -LiteralPath $manualTemplate -Raw
+    $manualActive = (
+        $manual -split "\r?\n" |
+            Where-Object {
+                $trimmed = $_.Trim()
+                $trimmed.Length -gt 0 -and -not $trimmed.StartsWith("#")
+            }
+    ) -join "`n"
+
+    foreach ($requiredMarker in @(
+        "EDIT:",
+        "Replace all EDIT placeholders before import.",
+        "dry-run=yes",
+        "set [find where name=ssh] disabled=yes",
+        "set [find where name=api] disabled=yes",
+        "set [find where name=api-ssl] disabled=yes",
+        "set [find where name=www] disabled=yes",
+        "set [find where name=www-ssl] disabled=yes"
+    )) {
+        if (-not $manual.Contains($requiredMarker)) {
+            throw "Manual template is missing required marker: $requiredMarker"
+        }
+    }
+
+    if ($manualActive -match 'set \[find where name=(ssh|api|api-ssl|www|www-ssl)\] disabled=no') {
+        throw "Manual template enables a prohibited remote management service."
+    }
+
+    if ($manualActive.LastIndexOf("vlan-filtering=yes") -lt $manualActive.LastIndexOf("/ip service")) {
+        throw "Manual template enables VLAN filtering too early."
+    }
+
+    Write-Host "OK: $([System.IO.Path]::GetFileName($manualTemplate))"
 }
 finally {
     if (

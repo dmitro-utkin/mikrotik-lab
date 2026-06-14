@@ -4,6 +4,9 @@ configs/local/
 # Local generated configs contain clear-text secrets.
 generated/local/
 
+# Local hand-edited RSC files can contain clear-text secrets.
+manual/local/
+
 # RouterOS backups and exports can contain sensitive data.
 backups/
 *.backup

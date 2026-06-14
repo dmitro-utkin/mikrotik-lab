@@ -29,6 +29,7 @@ Reset виконуйте окремо. Генератор навмисно не 
 - `configs/ap-legacy.example.json` - AP зі старим `wireless`;
 - `configs/ap-wifi.example.json` - AP з новим `wifi`;
 - `generated/*.rsc` - готові результати генерації.
+- `manual/MikroTik-local-editable-gateway.rsc` - ручний локальний шаблон з коментарями та позначками `EDIT`.
 
 ## Ваша схема у прикладах
 
@@ -81,10 +82,37 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Generate-MikroTikConfi
 Завантажте потрібний `.rsc` у Files, перегляньте його і виконайте:
 
 ```routeros
+/import file-name=gateway.rsc verbose=yes dry-run=yes
 /import file-name=gateway.rsc verbose=yes
 ```
 
 Для AP використайте відповідний `ap-legacy.rsc` або `ap-wifi.rsc`.
+
+### Основний offline-процес
+
+У поточних мережах заборонені SSH, API та автоматичне віддалене розгортання. Основний робочий процес такий:
+
+1. Створіть `manual/local` і скопіюйте туди `manual/MikroTik-local-editable-gateway.rsc`.
+2. Знайдіть усі позначки `EDIT:` та змініть порти, адреси, SSID, країну і паролі під конкретне завдання.
+3. Не додавайте файл з реальними паролями у Git.
+4. Локально відкрийте MikroTik через дозволений спосіб адміністрування.
+5. Завантажте `.rsc` у меню Files.
+6. Запустіть `dry-run=yes`.
+7. Після перевірки запустіть звичайний import.
+8. Виконайте команди з `POST-IMPORT CHECKLIST` наприкінці шаблону.
+
+Наприклад:
+
+```powershell
+New-Item -ItemType Directory -Force .\manual\local | Out-Null
+Copy-Item `
+  .\manual\MikroTik-local-editable-gateway.rsc `
+  .\manual\local\office-gateway.rsc
+```
+
+Каталог `manual/local` ігнорується Git. Шаблон також зупиняє імпорт, доки верхні значення `EDIT-...` не замінені.
+
+Шаблон вимикає Telnet, FTP, SSH, HTTP, HTTPS, API та API-SSL. Winbox залишається доступним лише з локальної management VLAN. Якщо політика забороняє також мережевий Winbox, у шаблоні треба встановити `disabled=yes` для сервісу `winbox` і залишити консольний доступ.
 
 ## Закладені правила безпеки
 
@@ -95,8 +123,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Generate-MikroTikConfi
 - VLAN-и не маршрутизуються один до одного;
 - усі VLAN-и мають доступ до WAN;
 - клієнти GUEST ізольовані один від одного на WiFi;
-- Winbox та SSH доступні лише з management subnet;
-- Telnet, FTP, HTTP та API вимкнені;
+- Winbox доступний лише з management subnet;
+- Telnet, FTP, SSH, HTTP, HTTPS та API вимкнені;
 - DNS redirect відсутній.
 
 ## Межі першої версії
@@ -132,7 +160,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Generate-MikroTikConfi
 
 ## Git workflow
 
-RouterOS не запускає Git напряму. Репозиторій зберігає генератор, приклади та історію змін, а конфігурація передається на MikroTik через SSH/SFTP.
+RouterOS не запускає Git напряму. Репозиторій зберігає генератор, ручні шаблони, приклади та історію змін. На MikroTik конфігурація передається лише вручну як локальний `.rsc` файл через Files.
 
 Рекомендований цикл роботи:
 
@@ -157,9 +185,11 @@ Copy-Item .\configs\gateway.example.json .\configs\local\gateway.json
 
 GitHub Actions автоматично запускає `Test-MikroTikConfigs.ps1` для кожного push у `main` і pull request. Перевірка генерує всі приклади повторно та падає, якщо tracked `.rsc` застаріли або порушено основні інваріанти.
 
-## Deployment через SSH
+## Архівний SSH deployment
 
-Windows OpenSSH Client уже надає `ssh.exe` та `scp.exe`. Спочатку перевірте звичайне підключення:
+Цей розділ і `Deploy-MikroTikConfig.ps1` збережені для можливого майбутнього використання в інших середовищах. У поточних мережах цей спосіб заборонений і не використовується.
+
+Windows OpenSSH Client уже надає `ssh.exe` та `scp.exe`. У середовищі, де SSH дозволений, спочатку перевіряють звичайне підключення:
 
 ```powershell
 ssh admin@10.11.88.1
@@ -203,9 +233,11 @@ ssh admin@10.11.88.1
 
 Поточна версія конфігурації призначена для чистого RouterOS. Вона не робить автоматичну міграцію діючого роутера і не запускає `/system reset-configuration`. Для першого розгортання reset та відновлення доступу слід планувати окремо через MAC Winbox, serial console або `run-after-reset`.
 
-## Deployment з GitHub
+## Майбутній deployment з GitHub
 
-Звичайний GitHub-hosted runner не бачить приватну адресу MikroTik. Для автоматичного deployment потрібен один із варіантів:
+Поточний GitHub workflow лише перевіряє файли й ніколи не підключається до MikroTik. Автоматичний deployment у ваших мережах не застосовується.
+
+Якщо в іншому середовищі це колись буде дозволено, звичайний GitHub-hosted runner не бачить приватну адресу MikroTik. Для deployment потрібен один із варіантів:
 
 - self-hosted GitHub runner у вашій management VLAN;
 - VPN між runner та management мережею;

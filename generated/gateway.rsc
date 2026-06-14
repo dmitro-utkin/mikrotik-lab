@@ -131,9 +131,10 @@ add chain=srcnat action=masquerade out-interface-list=WAN comment="NAT dynamic W
 set [find where name=telnet] disabled=yes
 set [find where name=ftp] disabled=yes
 set [find where name=www] disabled=yes
+set [find where name=www-ssl] disabled=yes
 set [find where name=api] disabled=yes
 set [find where name=api-ssl] disabled=yes
-set [find where name=ssh] disabled=no address="10.11.88.0/24"
+set [find where name=ssh] disabled=yes
 set [find where name=winbox] disabled=no address="10.11.88.0/24"
 
 # VLAN filtering is deliberately enabled only after management and VLAN tables exist.
