@@ -1,0 +1,24 @@
+# Device-specific configs can contain WiFi passphrases and addresses.
+configs/local/
+
+# Local generated configs contain clear-text secrets.
+generated/local/
+
+# RouterOS backups and exports can contain sensitive data.
+backups/
+*.backup
+*.auto.log
+
+# SSH keys and local environment files.
+.env
+.env.*
+*.key
+*.pem
+id_rsa*
+id_ed25519*
+
+# Editor and operating-system files.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

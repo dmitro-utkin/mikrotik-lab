@@ -129,3 +129,86 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Generate-MikroTikConfi
 - WORK: `10.11.100.10-10.11.100.100`;
 - GUEST: `10.11.200.10-10.11.200.100`;
 - MGMT: `10.11.88.10-10.11.88.50`.
+
+## Git workflow
+
+RouterOS не запускає Git напряму. Репозиторій зберігає генератор, приклади та історію змін, а конфігурація передається на MikroTik через SSH/SFTP.
+
+Рекомендований цикл роботи:
+
+```powershell
+git switch -c feature/change-vlan-layout
+# Відредагуйте example JSON та/або генератор.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Test-MikroTikConfigs.ps1
+git add .
+git commit -m "Update MikroTik VLAN layout"
+git push
+```
+
+Для реального роутера створіть локальний файл, який не потрапить у commit:
+
+```powershell
+New-Item -ItemType Directory -Force .\configs\local | Out-Null
+Copy-Item .\configs\gateway.example.json .\configs\local\gateway.json
+# Відредагуйте configs\local\gateway.json і встановіть реальні паролі.
+```
+
+Каталоги `configs/local`, `generated/local` і `backups` ігноруються Git. Саме у `configs/local` потрібно зберігати реальні WiFi-паролі. Не записуйте ключі чи паролі у tracked JSON, workflow або командний рядок.
+
+GitHub Actions автоматично запускає `Test-MikroTikConfigs.ps1` для кожного push у `main` і pull request. Перевірка генерує всі приклади повторно та падає, якщо tracked `.rsc` застаріли або порушено основні інваріанти.
+
+## Deployment через SSH
+
+Windows OpenSSH Client уже надає `ssh.exe` та `scp.exe`. Спочатку перевірте звичайне підключення:
+
+```powershell
+ssh admin@10.11.88.1
+```
+
+Краще використовувати окремий SSH-ключ, а не пароль. Публічний ключ потрібно завантажити у Files та імпортувати на RouterOS:
+
+```routeros
+/user/ssh-keys/import public-key-file=mikrotik_deploy.pub user=admin
+```
+
+Генерація, upload та безпечний `dry-run` без застосування:
+
+```powershell
+.\Deploy-MikroTikConfig.ps1 `
+  -RouterHost 10.11.88.1 `
+  -User admin `
+  -IdentityFile "$env:USERPROFILE\.ssh\mikrotik_deploy" `
+  -ConfigPath .\configs\local\gateway.json
+```
+
+Після перевірки результату застосуйте той самий профіль:
+
+```powershell
+.\Deploy-MikroTikConfig.ps1 `
+  -RouterHost 10.11.88.1 `
+  -User admin `
+  -IdentityFile "$env:USERPROFILE\.ssh\mikrotik_deploy" `
+  -ConfigPath .\configs\local\gateway.json `
+  -Apply
+```
+
+Скрипт не вимикає перевірку SSH host key, не передає пароль у параметрах і не виконує reset. За замовчуванням він:
+
+1. генерує тимчасовий `.rsc` поза репозиторієм;
+2. відмовляється працювати з `CHANGE-ME` паролями;
+3. завантажує файл через SCP/SFTP;
+4. виконує `/import ... verbose=yes dry-run=yes`;
+5. застосовує конфіг лише за наявності `-Apply`;
+6. видаляє тимчасовий файл з роутера.
+
+Поточна версія конфігурації призначена для чистого RouterOS. Вона не робить автоматичну міграцію діючого роутера і не запускає `/system reset-configuration`. Для першого розгортання reset та відновлення доступу слід планувати окремо через MAC Winbox, serial console або `run-after-reset`.
+
+## Deployment з GitHub
+
+Звичайний GitHub-hosted runner не бачить приватну адресу MikroTik. Для автоматичного deployment потрібен один із варіантів:
+
+- self-hosted GitHub runner у вашій management VLAN;
+- VPN між runner та management мережею;
+- локальний сервер, який після merge виконує `Deploy-MikroTikConfig.ps1`.
+
+Приватний SSH-ключ має зберігатися у credential store runner або GitHub Actions Secret, а не в репозиторії. На цьому етапі workflow виконує лише перевірку і нічого не змінює на роутерах.
