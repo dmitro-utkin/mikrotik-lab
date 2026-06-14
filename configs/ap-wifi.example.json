@@ -1,0 +1,70 @@
+{
+  "role": "access-point",
+  "identity": "MikroTik-ITV-AP-WiFi",
+  "bridge": "bridge-ap",
+  "timeZone": "Europe/Kyiv",
+  "requireCleanConfig": true,
+  "wirelessDriver": "wifi",
+  "trunkPorts": [
+    "ether1"
+  ],
+  "managementVlan": 888,
+  "management": {
+    "address": "10.11.88.3/24",
+    "gateway": "10.11.88.1"
+  },
+  "dnsServers": [
+    "1.1.1.1",
+    "8.8.8.8"
+  ],
+  "vlans": [
+    {
+      "id": 888,
+      "name": "mgmt",
+      "comment": "mgmt_vlan",
+      "subnet": "10.11.88.0/24",
+      "accessPorts": [
+        "ether5"
+      ]
+    },
+    {
+      "id": 100,
+      "name": "work",
+      "comment": "work_vlan",
+      "subnet": "10.11.100.0/24",
+      "accessPorts": []
+    },
+    {
+      "id": 200,
+      "name": "guest",
+      "comment": "guest_vlan",
+      "subnet": "10.11.200.0/24",
+      "accessPorts": []
+    }
+  ],
+  "wifi": {
+    "enabled": true,
+    "country": "Ukraine",
+    "installation": "indoor",
+    "networks": [
+      {
+        "name": "work",
+        "interface": "wifi1",
+        "vlan": 100,
+        "ssid": "ITV-WORK",
+        "passphrase": "CHANGE-ME-WORK-PASSWORD",
+        "authenticationTypes": "wpa2-psk,wpa3-psk",
+        "clientIsolation": false
+      },
+      {
+        "name": "guest",
+        "interface": "wifi2",
+        "vlan": 200,
+        "ssid": "ITV-GUEST",
+        "passphrase": "CHANGE-ME-GUEST-PASSWORD",
+        "authenticationTypes": "wpa2-psk,wpa3-psk",
+        "clientIsolation": true
+      }
+    ]
+  }
+}

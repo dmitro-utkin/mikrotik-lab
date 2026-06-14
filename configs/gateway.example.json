@@ -1,0 +1,90 @@
+{
+  "role": "gateway",
+  "identity": "MikroTik-ITV-Shtab",
+  "bridge": "bridge-work",
+  "timeZone": "Europe/Kyiv",
+  "requireCleanConfig": true,
+  "wirelessDriver": "wifi",
+  "wan": {
+    "interface": "ether1",
+    "mode": "dhcp"
+  },
+  "trunkPorts": [
+    "ether2"
+  ],
+  "managementVlan": 888,
+  "dnsServers": [
+    "1.1.1.1",
+    "8.8.8.8"
+  ],
+  "vlans": [
+    {
+      "id": 888,
+      "name": "mgmt",
+      "comment": "mgmt_vlan",
+      "subnet": "10.11.88.0/24",
+      "routerAddress": "10.11.88.1/24",
+      "accessPorts": [
+        "ether5"
+      ],
+      "dhcp": {
+        "enabled": true,
+        "pool": "10.11.88.10-10.11.88.50",
+        "leaseTime": "1h"
+      }
+    },
+    {
+      "id": 100,
+      "name": "work",
+      "comment": "work_vlan",
+      "subnet": "10.11.100.0/24",
+      "routerAddress": "10.11.100.1/24",
+      "accessPorts": [
+        "ether3"
+      ],
+      "dhcp": {
+        "enabled": true,
+        "pool": "10.11.100.10-10.11.100.100",
+        "leaseTime": "1h"
+      }
+    },
+    {
+      "id": 200,
+      "name": "guest",
+      "comment": "guest_vlan",
+      "subnet": "10.11.200.0/24",
+      "routerAddress": "10.11.200.1/24",
+      "accessPorts": [],
+      "dhcp": {
+        "enabled": true,
+        "pool": "10.11.200.10-10.11.200.100",
+        "leaseTime": "1h"
+      }
+    }
+  ],
+  "wifi": {
+    "enabled": true,
+    "country": "Ukraine",
+    "installation": "indoor",
+    "networks": [
+      {
+        "name": "work",
+        "interface": "wifi1",
+        "vlan": 100,
+        "ssid": "ITV-WORK",
+        "passphrase": "CHANGE-ME-WORK-PASSWORD",
+        "authenticationTypes": "wpa2-psk,wpa3-psk",
+        "clientIsolation": false
+      },
+      {
+        "name": "guest",
+        "interface": "wifi2",
+        "vlan": 200,
+        "ssid": "ITV-GUEST",
+        "passphrase": "CHANGE-ME-GUEST-PASSWORD",
+        "authenticationTypes": "wpa2-psk,wpa3-psk",
+        "clientIsolation": true
+      }
+    ]
+  }
+}
